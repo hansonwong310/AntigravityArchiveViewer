@@ -1,0 +1,45 @@
+# 🔮 Antigravity ArchiveViewer AI Codebase Rules
+
+> **MANDATORY RULES FOR ALL AI AGENTS WORKING ON THIS WORKSPACE**
+> 
+> 本项目遵循“零依赖原生 Node API 后端”与“静态 CDN 极速 React 前端”技术标准。所有 AI 助手在修改或扩展本项目代码时，**必须严格无条件遵守以下宪法级红线与开发规范**。
+
+---
+
+## 🎯 1. 宪法级三大红线 (The Three Golden Rules)
+
+1. **🔴 零依赖红线 (Zero npm Dependency)**:
+   - 后端只能使用 Node.js 核心库（`fs`, `path`, `http`, `url`）。
+   - **绝对禁止运行 `npm install` 引入任何第三方包**。
+2. **🔴 静态 CDN 前端红线 (Single-Page React CDN)**:
+   - 前端所有视图逻辑必须全部封装在单一文件 `public/index.html` 中。
+   - **绝对禁止引入 Vite、Webpack 或者是任何前端打包构建工具**。
+   - 必须通过 CDN 动态拉取 React 18, Babel, marked, mermaid。
+3. **🔴 纯净 Vanilla CSS 样式红线 (Vanilla CSS Style Only)**:
+   - 样式逻辑只能在 `public/app.css` 中编写。
+   - **绝对禁止引入 TailwindCSS 或者是任何第三方 UI / CSS 框架**。
+   - 必须严格遵循现有的 HSL 主题色变量规范。
+
+---
+
+## 💻 2. 后端开发与安全规范 (Backend Requirements)
+
+- **防路径穿越攻击 (Path Traversal Protection)**:
+  在静态服务器读取文件时，必须验证解析后的绝对路径以 `PUBLIC_DIR` 开头，阻断任何试图利用 `../` 溢出根目录的恶意读取。
+- **高容错 JSONL 解析 (Robust JSONL Parsing)**:
+  `transcript.jsonl` 是流式生成的。必须在单行 `JSON.parse` 周围包裹独立的 `try-catch` 块，确保个别行的损坏或解析错误不会导致整个 API 挂掉。
+- **全局搜索数据限流 (Search Limit)**:
+  `GET /api/search` 接口最多返回前 **100** 条匹配结果，避免一次性加载过大引起浏览器卡死。
+
+---
+
+## 🎨 3. 前端 UX 交互与设计规范 (Frontend UI/UX Specs)
+
+- **HSL 色彩与磨砂玻璃 (Glassmorphism)**:
+  不要使用写死的十六进制或颜色名。背景和容器设计必须严格满足半透明高斯模糊（`backdrop-filter: blur(16px)`）和微阴影体系，保持高级的极客与明亮主题过渡。
+- **长文本可视物理限高 (Collapsible CSS Limit)**:
+  长代码块或终端返回限高时，**严禁使用 JavaScript 的 `slice()` 或字数截断**！这会切断 Markdown/HTML 未闭合标签，导致全局排版崩溃。必须在 DOM 渲染后测量高度（超过 `260px` 警示线），使用纯 CSS 设置最大高度为 `250px`，并在底部加盖渐变透明毛玻璃遮罩。
+- **Mermaid 异步渲染防白屏 (Mermaid Async Lifecycle)**:
+  Mermaid 在 React DOM 载入周期中，必须始终包裹在至少 **`100ms~150ms`** 的 `setTimeout` 延迟中执行 `mermaid.run()`，保障 DOM 容器已完全就绪。
+- **平滑滚动与霓虹闪烁定位 (Smooth Scroll & Pulse Jump)**:
+  点击全局搜索结果后，Timeline 视图卡片通过 `scrollIntoView({ behavior: 'smooth', block: 'center' })` 定位，并通过 class 触发 **`2.5 秒`** 的紫色霓虹呼吸脉冲动画（结束后自动移除，不可残留阴影）。

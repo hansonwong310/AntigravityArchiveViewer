@@ -1,0 +1,7 @@
+# macOS system files
+.DS_Store
+
+# Log files
+*.log
+server_stdout.log
+server_stderr.log
