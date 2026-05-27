@@ -1,12 +1,11 @@
 ## 这是需求流动任务看版文档，不要在这个文档放入需求细节
 
 ## New Requests
-- [ ] **FA-002**：优化 App 启动延迟与首屏黑屏闪烁（详细需求定义见：[FA-002 需求分析说明书](file:///Users/hansonwang/Documents/AntigravityAV/docs/Feature_Analysis_002.md)）
-- [ ] **FA-003**：设计并装配时尚的原生 macOS App 图标（详细需求定义见：[FA-003 需求分析说明书](file:///Users/hansonwang/Documents/AntigravityAV/docs/Feature_Analysis_003.md)）
-应用名字叫AntigravityArchiveViewer，我知道比较长，但不能叫ArchiveViewer的，用户不知道干啥的
+- [ ] **FA-004**：重命名客户端应用与安装包为 AntigravityArchiveViewer（详细需求定义见：[FA-004 需求分析说明书](file:///Users/hansonwang/Documents/AntigravityAV/docs/Feature_Analysis_004.md)）
 
 ## Refined Requests
-
+- [ ] **FA-002**：优化 App 启动延迟与首屏黑屏闪烁（详细需求定义见：[FA-002 需求分析说明书](file:///Users/hansonwang/Documents/AntigravityAV/docs/Feature_Analysis_002.md)）
+- [ ] **FA-003**：设计并装配时尚的原生 macOS App 图标（详细需求定义见：[FA-003 需求分析说明书](file:///Users/hansonwang/Documents/AntigravityAV/docs/Feature_Analysis_003.md)）
 
 ---
 
