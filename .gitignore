@@ -9,3 +9,4 @@ server_stderr.log
 # Compiled binaries
 *.app/
 *.dmg
+release/
