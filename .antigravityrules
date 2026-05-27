@@ -45,4 +45,4 @@
   点击全局搜索结果后，Timeline 视图卡片通过 `scrollIntoView({ behavior: 'smooth', block: 'center' })` 定位，并通过 class 触发 **`2.5 秒`** 的紫色霓虹呼吸脉冲动画（结束后自动移除，不可残留阴影）。
 
 ## 4.需求管理 Feature_Request.md
-一旦有new request 就帮我详细定义需求，知道我确认OK，放入Refined Request，开始做实施计划，确认后实施。
+一旦有new request 就帮我详细定义需求，为特定需求编号生成每个需求的独立的需求分析文档，直到我确认OK，移动入Refined Request，开始做实施计划，确认后实施。

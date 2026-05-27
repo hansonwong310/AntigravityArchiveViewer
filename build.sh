@@ -14,7 +14,7 @@ NC='\033[0m' # No Color
 
 clear
 echo -e "${PURPLE}================================================================${NC}"
-echo -e "${PURPLE}         🚀  Antigravity ArchiveViewer 官方编译发布引擎 🚀         ${NC}"
+echo -e "${PURPLE}         🚀  AntigravityArchiveViewer 官方编译发布引擎 🚀         ${NC}"
 echo -e "${PURPLE}================================================================${NC}"
 echo ""
 
@@ -40,23 +40,23 @@ else
     exit 1
 fi
 
-# 3. 将生成的 DMG 转移到发布目录下
+# 3. 将生成的 DMG 转移到发布目录下 (对齐重命名)
 echo -e "📦 ${BLUE}正在将 DMG 镜像移动至发布目录 [release/]...${NC}"
-if [ -f "ArchiveViewer.dmg" ]; then
-    mv ArchiveViewer.dmg "$RELEASE_DIR/ArchiveViewer.dmg"
-    echo -e "✅ ${GREEN}成功移至: ${CYAN}${RELEASE_DIR}/ArchiveViewer.dmg${NC}"
+if [ -f "AntigravityArchiveViewer.dmg" ]; then
+    mv AntigravityArchiveViewer.dmg "$RELEASE_DIR/AntigravityArchiveViewer.dmg"
+    echo -e "✅ ${GREEN}成功移至: ${CYAN}${RELEASE_DIR}/AntigravityArchiveViewer.dmg${NC}"
 else
-    echo -e "❌ ${RED}错误: 未找到生成的 ArchiveViewer.dmg 文件。${NC}"
+    echo -e "❌ ${RED}错误: 未找到生成的 AntigravityArchiveViewer.dmg 文件。${NC}"
     exit 1
 fi
 
-# 4. 清理临时生成的 .app 目录以维持根目录纯净
-echo -e "🧹 ${BLUE}正在清理临时生成的 ArchiveViewer.app 目录...${NC}"
-rm -rf ArchiveViewer.app
+# 4. 清理临时生成的 .app 目录以维持根目录纯净 (对齐重命名)
+echo -e "🧹 ${BLUE}正在清理临时生成的 AntigravityArchiveViewer.app 目录...${NC}"
+rm -rf AntigravityArchiveViewer.app
 
 echo ""
 echo -e "${GREEN}================================================================${NC}"
 echo -e "🎉 ${GREEN}编译发布大功告成！最终发布镜像已完全就绪。${NC}"
 echo -e "${GREEN}================================================================${NC}"
-echo -e " 📍 最终发布路径: ${CYAN}${PROJECT_DIR}/${RELEASE_DIR}/ArchiveViewer.dmg${NC}"
+echo -e " 📍 最终发布路径: ${CYAN}${PROJECT_DIR}/${RELEASE_DIR}/AntigravityArchiveViewer.dmg${NC}"
 echo -e "${GREEN}================================================================${NC}"

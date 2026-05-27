@@ -1,10 +1,13 @@
 import Cocoa
 import WebKit
 
-class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
+class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, WKNavigationDelegate {
     var window: NSWindow!
     var webView: WKWebView!
+    var loadingSpinner: NSProgressIndicator!
     var serverProcess: Process?
+    var probeTimer: Timer?
+    var isWebViewLoaded = false
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         // 1. 启动本地 Node.js API 服务
@@ -27,7 +30,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             backing: .buffered,
             defer: false
         )
-        window.title = "Antigravity ArchiveViewer"
+        window.title = "AntigravityArchiveViewer"
         window.titlebarAppearsTransparent = true
         window.titleVisibility = .hidden
         window.delegate = self
@@ -37,6 +40,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         let webConfiguration = WKWebViewConfiguration()
         webView = WKWebView(frame: window.contentView!.bounds, configuration: webConfiguration)
         webView.autoresizingMask = [.width, .height]
+        webView.navigationDelegate = self
         
         // 预设磨砂玻璃背景底色以消除白屏闪烁 (对齐 HSL #0a0b10)
         webView.setValue(false, forKey: "drawsBackground") 
@@ -44,16 +48,77 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
         window.contentView?.addSubview(webView)
 
-        // 4. 延迟加载页面 (确保 Node 后端已启动就绪)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
-            if let url = URL(string: "http://localhost:5173") {
-                let request = URLRequest(url: url)
-                self.webView.load(request)
+        // 4. 配置与挂载原生 Loading 菊花指示器 (NSProgressIndicator)
+        setupSpinner()
+
+        // 5. 启动异步端口智能检测探针 (Probe)
+        startPortProbe()
+
+        // 6. 组装原生应用编辑菜单 (对齐 Cmd+C/Cmd+V 复制粘贴及全链路重命名)
+        setupMenu()
+    }
+
+    func setupSpinner() {
+        let spinnerSize: CGFloat = 40
+        let spinnerRect = NSRect(
+            x: (window.contentView!.bounds.width - spinnerSize) / 2,
+            y: (window.contentView!.bounds.height - spinnerSize) / 2,
+            width: spinnerSize,
+            height: spinnerSize
+        )
+        
+        loadingSpinner = NSProgressIndicator(frame: spinnerRect)
+        loadingSpinner.style = .spinning
+        loadingSpinner.controlSize = .large
+        loadingSpinner.isDisplayedWhenStopped = false
+        loadingSpinner.autoresizingMask = [.minXMargin, .maxXMargin, .minYMargin, .maxYMargin]
+        
+        window.contentView?.addSubview(loadingSpinner)
+        loadingSpinner.startAnimation(nil)
+    }
+
+    func startPortProbe() {
+        // 每 50 毫秒向本地接口发起网络探针检测，避免盲目硬延时
+        probeTimer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { [weak self] _ in
+            self?.checkServerStatus()
+        }
+    }
+
+    func checkServerStatus() {
+        guard let url = URL(string: "http://localhost:5173/api/calendar-stats") else { return }
+        
+        let task = URLSession.shared.dataTask(with: url) { [weak self] (_, response, error) in
+            guard let self = self else { return }
+            
+            // 如果成功捕获状态码 200，说明 Node 后端服务已就绪
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
+                DispatchQueue.main.async {
+                    self.probeTimer?.invalidate()
+                    self.probeTimer = nil
+                    
+                    if !self.isWebViewLoaded {
+                        self.isWebViewLoaded = true
+                        if let loadUrl = URL(string: "http://localhost:5173") {
+                            let request = URLRequest(url: loadUrl)
+                            self.webView.load(request)
+                        }
+                    }
+                }
             }
         }
+        task.resume()
+    }
 
-        // 5. 组装原生应用编辑菜单 (对齐 Cmd+C/Cmd+V 复制粘贴等热键)
-        setupMenu()
+    // WebView 导航渲染完成回调
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        // 平滑渐变淡出菊花加载器
+        NSAnimationContext.runAnimationGroup({ context in
+            context.duration = 0.4
+            self.loadingSpinner.animator().alphaValue = 0.0
+        }) {
+            self.loadingSpinner.stopAnimation(nil)
+            self.loadingSpinner.removeFromSuperview()
+        }
     }
 
     func startNodeServer() {
@@ -103,6 +168,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     func applicationWillTerminate(_ notification: Notification) {
         // App 退出时，强力杀掉 Node.js 子进程，避免端口占用溢出
+        probeTimer?.invalidate()
         serverProcess?.terminate()
         print("Terminated Node server")
     }
@@ -115,18 +181,18 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     func setupMenu() {
         let mainMenu = NSMenu()
         
-        // 1. 主应用菜单
+        // 1. 主应用菜单 (重命名为 AntigravityArchiveViewer)
         let appMenuItem = NSMenuItem()
         mainMenu.addItem(appMenuItem)
         let appMenu = NSMenu()
         appMenuItem.submenu = appMenu
         
-        appMenu.addItem(withTitle: "关于 ArchiveViewer", action: nil, keyEquivalent: "")
+        appMenu.addItem(withTitle: "关于 AntigravityArchiveViewer", action: nil, keyEquivalent: "")
         appMenu.addItem(NSMenuItem.separator())
-        appMenu.addItem(withTitle: "隐藏 ArchiveViewer", action: #selector(NSApplication.hide(_:)), keyEquivalent: "h")
+        appMenu.addItem(withTitle: "隐藏 AntigravityArchiveViewer", action: #selector(NSApplication.hide(_:)), keyEquivalent: "h")
         appMenu.addItem(withTitle: "隐藏其他", action: #selector(NSApplication.hideOtherApplications(_:)), keyEquivalent: "")
         appMenu.addItem(NSMenuItem.separator())
-        appMenu.addItem(withTitle: "退出 ArchiveViewer", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
+        appMenu.addItem(withTitle: "退出 AntigravityArchiveViewer", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
         
         // 2. 编辑菜单 (保证 Web 输入框内复制、粘贴、撤销、全选功能正常)
         let editMenuItem = NSMenuItem()
