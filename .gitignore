@@ -5,3 +5,7 @@
 *.log
 server_stdout.log
 server_stderr.log
+
+# Compiled binaries
+*.app/
+*.dmg

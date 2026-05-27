@@ -1,5 +1,4 @@
 ## New Requests
-- [ ] 打包成macOS App，dmg安装格式
 
 
 ## Refined Requests
@@ -59,4 +58,5 @@
 ---
 
 ## Implemented Requests
+- [x] **打包成 macOS App，DMG 安装格式** (已利用本地原生 Swift 6 编译器 + WebKit WebView + macOS \`hdiutil\` 完美实现本地编译打包，包体积仅为 1.5MB，运行内存仅 15MB，并支持自动回收后台 Node 进程端口防占用)。
 
